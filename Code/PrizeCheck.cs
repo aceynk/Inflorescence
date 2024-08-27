@@ -83,13 +83,9 @@ public class ContentPrizeCheck
             int prizeLevel = Helper.PrizeClass(score);
 
             if (prizeLevel == 4) return;
-            
-            Helper.Log((score - Helper.PrizeClassGate[prizeLevel - 1]).ToString());
-            Helper.Log(Helper.BonusFunc(score - Helper.PrizeClassGate[prizeLevel - 1]).ToString());
 
             int bonus = Helper.BonusFunc(score - Helper.PrizeClassGate[prizeLevel - 1]);
             
-            Helper.Log("Added Contest Mail");
             Game1.player.mailbox.Add(Helper.InflorescenceMailKeys[prizeLevel - 1]);
 
             Game1.player.modData[Helper.ModDataPrizeBonusKey] = bonus.ToString();
