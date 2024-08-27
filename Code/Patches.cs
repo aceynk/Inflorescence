@@ -194,19 +194,19 @@ public class SDV_Object_performUseAction
 
             switch (gate)
             {
-                case 4:
+                case 1:
                     earpieceMessage = new HUDMessage("You're one of the best farms around! You'll earn Gold Bouquets.");
                     uiItem = ModEntry.ContentPackId + "_GoldBouquet";
                     break;
-                case 3:
+                case 2:
                     earpieceMessage = new HUDMessage("You're doing incredible! You'll earn Silver Bouquets.");
                     uiItem = ModEntry.ContentPackId + "_SilverBouquet";
                     break;
-                case 2:
+                case 3:
                     earpieceMessage = new HUDMessage("You're in the runnings! You'll earn Bronze Bouquets.");
                     uiItem = ModEntry.ContentPackId + "_BronzeBouquet";
                     break;
-                case 1:
+                case 4:
                     earpieceMessage = new HUDMessage("You're not even in the runnings! You won't win anything...");
                     break;
             }
