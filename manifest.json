@@ -1,0 +1,13 @@
+{
+  "Name": "Inflorescence",
+  "Author": "aceynk",
+  "Version": "1.0.0",
+  "Description": "Adds functionality related to flowers to Stardew Valley",
+  "UniqueID": "aceynk.inflorescence",
+  "EntryDll": "Inflorescence.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [
+    "Nexus:0",
+    "Github:aceynk/Inflorescence"
+  ]
+}
