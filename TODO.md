@@ -7,5 +7,9 @@
 5. ~~Create prize gate checker for shop.~~
 6. ~~Create API for mod.~~
 7. Add string to bug enemies in mines. (see #2)
-8. Soap??
+8. Soap
+   - make machine for turning wood -> ash
+   - let oil maker turn vegetables into vegetable oil
+   - recycling machine + ash -> potassium hydroxide
+   - soap maker + potassium hydroxide + vegetable oil + flower = soap
 9. Flower hat multicolor based on craft? idk if possible.
