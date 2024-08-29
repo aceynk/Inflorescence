@@ -1,9 +1,7 @@
-using HarmonyLib;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.TerrainFeatures;
-using Object = System.Object;
 
 namespace Inflorescence.Code;
 
@@ -21,6 +19,8 @@ public class Helper
         "Inflorescence_MailSilver",
         "Inflorescence_MailBronze"
     };
+
+    public static IInflorescenceApi api = ModEntry.api;
 
     public static void Ensure_modData(Farm obj, string key)
     {
@@ -65,14 +65,9 @@ public class ContentPrizeCheck
 {
     public static void OnDayStarted(object? sender, DayStartedEventArgs e)
     {
-        Farm thisFarm = Game1.getFarm();
-        Helper.Ensure_modData(thisFarm, Helper.ModDataPrizeCheckKey);
-        Helper.Ensure_modData(Game1.player, Helper.ModDataPrizeBonusKey);
-        Helper.Ensure_modData(Game1.player, Helper.ModDataLastScoreKey);
-        
         CountMatureFlowers();
         
-        int score = int.Parse(thisFarm.modData[Helper.ModDataPrizeCheckKey]);
+        int score = Helper.api.InflorescenceScore;
         
         Helper.Log("Current Prize Score: " + score);
         
@@ -88,8 +83,8 @@ public class ContentPrizeCheck
             
             Game1.player.mailbox.Add(Helper.InflorescenceMailKeys[prizeLevel - 1]);
 
-            Game1.player.modData[Helper.ModDataPrizeBonusKey] = bonus.ToString();
-            thisFarm.modData[Helper.ModDataPrizeCheckKey] = "0";
+            Helper.api.InflorescenceBonus = bonus;
+            Helper.api.InflorescenceScore = 0;
         }
 
         if (!Game1.player.mailReceived.Contains("Inflorescence_MailInitiation"))
@@ -97,7 +92,7 @@ public class ContentPrizeCheck
             Game1.addMailForTomorrow("Inflorescence_MailInitiation");
         }
         
-        Game1.player.modData[Helper.ModDataLastScoreKey] = score.ToString();
+        Helper.api.InflorescenceLast = score;
     }
 
     public static void CountMatureFlowers()
@@ -116,12 +111,10 @@ public class ContentPrizeCheck
             if (!harvestable) continue;
 
             if (!Helper.FlowerCache.Contains(dirt.crop.indexOfHarvest.Value)) continue;
-            
-            Helper.Ensure_modData(thisFarm, Helper.ModDataPrizeCheckKey);
         
-            int prizeScore = int.Parse(thisFarm.modData[Helper.ModDataPrizeCheckKey]);
+            int prizeScore = Helper.api.InflorescenceScore;
 
-            thisFarm.modData[Helper.ModDataPrizeCheckKey] = (prizeScore + 1).ToString();
+            Helper.api.InflorescenceScore = prizeScore + 1;
         }
     }
 }

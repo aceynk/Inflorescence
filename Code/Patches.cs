@@ -172,10 +172,7 @@ public class SDV_Object_performUseAction
 
         if (!normalGameplay) return;
         
-        Farm thisFarm = Game1.getFarm();
-        Helper.Ensure_modData(thisFarm, Helper.ModDataPrizeCheckKey);
-        
-        int score = int.Parse(thisFarm.modData[Helper.ModDataPrizeCheckKey]);
+        int score = Helper.api.InflorescenceScore;
 
         if (__instance.ItemId == processIds[0])
         {
