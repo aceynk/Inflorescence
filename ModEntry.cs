@@ -53,6 +53,7 @@ public class ModEntry : Mod
     {
         api.InflorescenceScore = int.Parse(args[0]);
         api.InflorescenceLast = int.Parse(args[0]);
+        api.InflorescenceBonus = Code.Helper.BonusFunc(api.InflorescenceScore);
         
         Log("Successfully set your Prize Score to " + args[0], LogLevel.Info);
     }
@@ -94,7 +95,7 @@ public class ModEntry : Mod
                           + "%item object " + currency + " " + (5 + bonus) + " %%[" + split[1];
         }
         
-        Game1.player.modData[Code.Helper.ModDataPrizeBonusKey] = "0";
+        api.InflorescenceBonus = 0;
     }
 
     private static void OnAssetRequested(object? sender, AssetRequestedEventArgs e)

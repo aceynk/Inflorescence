@@ -55,9 +55,9 @@ public class Helper
         return score > PrizeClassGate[2] ? 3 : 4;
     }
 
-    public static int BonusFunc(int bonusScore)
+    public static int BonusFunc(int score)
     {
-        return (int)Math.Max(0, Math.Floor(0.5 * Math.Sqrt(bonusScore)));
+        return (int)Math.Max(0, Math.Floor(0.5 * Math.Sqrt(score)));
     }
 }
 
@@ -65,11 +65,11 @@ public class ContentPrizeCheck
 {
     public static void OnDayStarted(object? sender, DayStartedEventArgs e)
     {
+        int oldScore = Helper.api.InflorescenceScore;
+        
         CountMatureFlowers();
         
         int score = Helper.api.InflorescenceScore;
-        
-        Helper.Log("Current Prize Score: " + score);
         
         if (Game1.Date.DayOfMonth % 7 == 0)
         {
@@ -77,7 +77,7 @@ public class ContentPrizeCheck
             
             int prizeLevel = Helper.PrizeClass(score);
 
-            if (prizeLevel == 4) return;
+            if (prizeLevel == 4) goto Next_Logic_NewDay;
 
             int bonus = Helper.BonusFunc(score - Helper.PrizeClassGate[prizeLevel - 1]);
             
@@ -87,10 +87,14 @@ public class ContentPrizeCheck
             Helper.api.InflorescenceScore = 0;
         }
 
+        Next_Logic_NewDay:
+
         if (!Game1.player.mailReceived.Contains("Inflorescence_MailInitiation"))
         {
             Game1.addMailForTomorrow("Inflorescence_MailInitiation");
         }
+        
+        Helper.Log("Overnight Prize Score Change (" + oldScore + " -> " + Helper.api.InflorescenceScore + ")");
         
         Helper.api.InflorescenceLast = score;
     }

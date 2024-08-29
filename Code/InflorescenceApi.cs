@@ -56,7 +56,7 @@ public class InflorescenceApi : IInflorescenceApi
         get
         {
             Farmer thisPlayer = Game1.player;
-            Helper.Ensure_modData(thisPlayer, Helper.ModDataPrizeBonusKey);
+            Helper.Ensure_modData(thisPlayer, Helper.ModDataLastScoreKey);
 
             int last = int.Parse(thisPlayer.modData[Helper.ModDataLastScoreKey]);
 

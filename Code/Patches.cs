@@ -178,7 +178,7 @@ public class SDV_Object_performUseAction
         {
             HUDMessage phoneMessage = new HUDMessage("Your current Inflorescence score is " + score);
 
-            phoneMessage.type = ModEntry.Manifest.UniqueID + "_RadioMsg";
+            phoneMessage.type = ModEntry.Manifest.UniqueID + "_RadioMsg" + score;
             phoneMessage.messageSubject = ItemRegistry.Create(ModEntry.ContentPackId + "_ScoreRadio");
         
             Game1.addHUDMessage(phoneMessage);
@@ -208,7 +208,7 @@ public class SDV_Object_performUseAction
                     break;
             }
             
-            earpieceMessage.type = ModEntry.Manifest.UniqueID + "_EarpieceMessage";
+            earpieceMessage.type = ModEntry.Manifest.UniqueID + "_EarpieceMessage" + gate;
             earpieceMessage.messageSubject = ItemRegistry.Create(uiItem);
             
             Game1.addHUDMessage(earpieceMessage);

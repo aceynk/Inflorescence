@@ -14,19 +14,19 @@ public interface IInflorescenceApi
     public List<string> FlowerCacheInclude { get; }
 
     /// <summary>
-    /// Int field that allows getting & setting. Accesses value from Farm modData.
+    /// Int field that allows getting and setting. Accesses value from Farm modData.
     /// This field is for the internal score used for placement in the Inflorescence competition.
     /// </summary>
     public int InflorescenceScore { get; set; }
     
     /// <summary>
-    /// Int field that allows getting & setting. Accesses value from Player modData.
+    /// Int field that allows getting and setting. Accesses value from Player modData.
     /// This field is for the internal bonus used for extra bouquets in the Inflorescence competition rewards.
     /// </summary>
     public int InflorescenceBonus { get; set; }
     
     /// <summary>
-    /// Int field that allows getting & setting. Accesses value from Player modData.
+    /// Int field that allows getting and setting. Accesses value from Player modData.
     /// This field is for the internal staggered score used for representing the final contest score in letters.
     /// </summary>
     public int InflorescenceLast { get; set; }
