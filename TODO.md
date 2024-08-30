@@ -8,7 +8,7 @@
 6. ~~Create API for mod.~~
 7. Add string to bug enemies in mines. (see #2)
 8. Soap
-   - make machine for turning wood -> ash
+   - ~~make machine for turning wood -> ash~~
    - let oil maker turn vegetables into vegetable oil
    - recycling machine + ash -> potassium hydroxide
    - soap maker + potassium hydroxide + vegetable oil + flower = soap
