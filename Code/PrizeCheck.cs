@@ -5,6 +5,11 @@ using StardewValley.TerrainFeatures;
 
 namespace Inflorescence.Code;
 
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+// ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable ClassNeverInstantiated.Global
+
 public class Helper
 {
     public static void Log(string v) {ModEntry.Log(v);}

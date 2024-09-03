@@ -13,3 +13,4 @@
    - recycling machine + ash -> potassium hydroxide
    - soap maker + potassium hydroxide + vegetable oil + flower = soap
 9. Flower hat multicolor based on craft? idk if possible.
+10. Add sound + debris on instant-growing flowers.

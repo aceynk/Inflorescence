@@ -2,6 +2,7 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
+using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using xTile.Dimensions;
@@ -10,6 +11,11 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Inflorescence.Code;
 
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+// ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable ClassNeverInstantiated.Global
+
 public class PatchHelper
 {
     public static DayOfWeek Inflor_Shop_Day = DayOfWeek.Tuesday;
@@ -17,7 +23,11 @@ public class PatchHelper
     internal static readonly Texture2D Inflor_Shop_Texture =
         Game1.content.Load<Texture2D>(ModEntry.ContentPackId + "/Shop");
     public static Rectangle Inflor_Shop_Bounds = new (960, 640, 192, 48);
-
+    public static List<string> SpecialCrafting = new()
+    {
+        ModEntry.ContentPackId + "_Bouquet"
+    };
+    
     public static bool isValidFlowerTile(HoeDirt dirt, bool isHarvestable = false)
     {
         Crop thisCrop = dirt.crop;
@@ -46,6 +56,50 @@ public class PatchHelper
     {
         Vector2 position = new Vector2(x, y);
         return isValidFlowerTile(location.terrainFeatures[position], isHarvestable);
+    }
+
+    public static List<Tuple<string, IInventory>> FindFlowers(List<IInventory> inventories, int number)
+    {
+        if (inventories is null)
+        {
+            Helper.Log("null inventories");
+            return new();
+        }
+        List<string> usedIds = new();
+        List<Tuple<string, IInventory>> outList = new();
+        
+        foreach (var coll in inventories)
+        {
+            if (!coll.HasAny()) continue;
+
+            foreach (var item in coll.GetRange(0, coll.Count))
+            {
+                if (item is null) continue;
+                
+                if (ModEntry.FlowerCache.Contains(item.ItemId) && !usedIds.Contains(item.ItemId))
+                {
+                    usedIds.Add(item.ItemId);
+                    outList.Add(new Tuple<string, IInventory>(item.ItemId, coll));
+                }
+
+                if (outList.Count >= number) return outList;
+            }
+        }
+
+        return outList;
+    }
+
+    public static void RemoveFlowers(List<Tuple<string, IInventory>> found)
+    {
+        foreach (var idCollTuple in found)
+        {
+            idCollTuple.Item2.ReduceId(idCollTuple.Item1, 1);
+        }
+    }
+
+    public static string FormatColor(Color color)
+    {
+        return color.R + "," + color.G + "," + color.B;
     }
 }
 
@@ -215,3 +269,99 @@ public class SDV_Object_performUseAction
         }
     }
 }
+
+/*
+// Private method. sorry for no nameof().
+[HarmonyPatch(typeof(CraftingPage), "clickCraftingRecipe")]
+public class SDV_Menus_CraftingPage_clickCraftingRecipe
+{
+    public static bool Prefix(ClickableTextureComponent c, CraftingPage __instance, bool playSound = true)
+    {
+        CraftingRecipe recipe = __instance.pagesOfCraftingRecipes[__instance.currentCraftingPage][c];
+
+        if (!PatchHelper.SpecialCrafting.Contains(recipe.name)) return true;
+
+        // currently only using this for bouquets
+
+        List<Tuple<string, IInventory>> flowers = new();
+        
+        Helper.Log("inventory");
+
+        flowers = flowers.Concat(PatchHelper.FindFlowers(
+            new List<IInventory> {(IInventory)__instance.inventory.actualInventory},
+            3
+        )).ToList();
+
+        if (flowers.Count != 3)
+        {
+            Helper.Log("materials");
+            
+            flowers = flowers.Concat(PatchHelper.FindFlowers(
+                __instance._materialContainers,
+                3 - flowers.Count
+            )).ToList();
+        }
+
+        if (flowers.Count != 3) return false;
+        
+        Helper.Log("3 flowers");
+
+        List<string> usedFlowers = flowers.Select(v => v.Item1).ToList();
+        List<Color> colors = usedFlowers.Select(
+            v => ItemContextTagManager.GetColorFromTags(new Object(v, 1)) ?? Color.White
+        ).ToList();
+        Item item = recipe.createItem();
+
+        //if (item is not ColoredObject thisObj) return false;
+        
+        Helper.Log("ColoredItem");
+
+        ColoredObject thisObj = new ColoredObject(item.ItemId, item.Stack, colors[0]);
+        thisObj.modData["selph.ExtraMachineConfig.ExtraColor.1"] = PatchHelper.FormatColor(colors[1]);
+        thisObj.modData["selph.ExtraMachineConfig.ExtraColor.2"] = PatchHelper.FormatColor(colors[2]);
+
+        thisObj.hovering = true;
+
+        Item heldItem = __instance.heldItem;
+
+        thisObj.Price += usedFlowers.Select(v => new Object(v, 1).Price).Sum();
+
+        if (__instance.heldItem is null)
+        {
+            PatchHelper.RemoveFlowers(flowers);
+            __instance.heldItem = thisObj;
+        }
+        else
+        {
+            // Taken from decompiled StardewValley.Menus.CraftingPage.clickCraftingRecipe
+            bool stackCondition = heldItem.Name != thisObj.Name ||
+                                  !heldItem.getOne().canStackWith(thisObj.getOne()) ||
+                                  heldItem.Stack + recipe.numberProducedPerCraft - 1 >=
+                                  heldItem.maximumStackSize();
+            
+            if (stackCondition) return false;
+            
+            if (heldItem is not ColoredObject chItem) return false;
+
+            if (thisObj.color != chItem.color) return false;
+            if (thisObj.modData["selph.ExtraMachineConfig.ExtraColor.1"] !=
+                chItem.modData["selph.ExtraMachineConfig.ExtraColor.1"]) return false;
+            if (thisObj.modData["selph.ExtraMachineConfig.ExtraColor.2"] !=
+                chItem.modData["selph.ExtraMachineConfig.ExtraColor.2"]) return false;
+
+            heldItem.Stack++;
+            
+            PatchHelper.RemoveFlowers(flowers);
+        }
+        
+        if (playSound)
+        {
+            Game1.playSound("coin");
+        }
+        
+        Game1.stats.checkForCraftingAchievements();
+        
+        return false;
+    }
+}
+*/

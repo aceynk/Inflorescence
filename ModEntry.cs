@@ -1,10 +1,17 @@
 ﻿using HarmonyLib;
 using Inflorescence.Code;
+using Leclair.Stardew.BetterCrafting;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 
 namespace Inflorescence;
+
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+// ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable ClassNeverInstantiated.Global
 
 public class ModEntry : Mod
 {
@@ -25,8 +32,10 @@ public class ModEntry : Mod
     public static IMonitor _log = null!;
     public static List<string> FlowerCache = new();
     public static IManifest Manifest;
-    public readonly static string ContentPackId = "aceynk.inflorescencecontent";
+    public static IModHelper thisHelper;
+    public static readonly string ContentPackId = "aceynk.inflorescencecontent";
     public static IInflorescenceApi api = new InflorescenceApi();
+    public static IBetterCrafting? bcApi;
     
     public override void Entry(IModHelper helper)
     {
@@ -34,9 +43,12 @@ public class ModEntry : Mod
 
         Manifest = ModManifest;
 
+        thisHelper = Helper;
+
         Helper.Events.GameLoop.DayStarted += ContentPrizeCheck.OnDayStarted;
         Helper.Events.Content.AssetRequested += OnAssetRequested;
         Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
+        Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
         
         helper.ConsoleCommands.Add("inflor_setscore", "Sets the player's Inflorescence score.\n\nUsage: inflor_setscore <value>\n- value: the integer amount.", SetScore);
         
@@ -47,6 +59,15 @@ public class ModEntry : Mod
     public override object GetApi()
     {
         return new InflorescenceApi();
+    }
+
+    private static void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
+    {
+        if (thisHelper.ModRegistry.IsLoaded("leclair.bettercrafting"))
+        {
+            bcApi = thisHelper.ModRegistry.GetApi<IBetterCrafting>("leclair.bettercrafting");
+            bcApi!.AddRecipeProvider(new Recipes());
+        }
     }
 
     private void SetScore(string command, string[] args)
@@ -62,6 +83,11 @@ public class ModEntry : Mod
     {
         FlowerCache = GetItemsByContextTag("flower_item")
             .Concat(api.FlowerCacheInclude).ToList();
+
+        foreach (string v in FlowerCache)
+        {
+            Log(v);
+        }
     }
 
     private static void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
