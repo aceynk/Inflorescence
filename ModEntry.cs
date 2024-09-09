@@ -82,7 +82,8 @@ public class ModEntry : Mod
     public static void DoFlowerCache()
     {
         FlowerCache = GetItemsByContextTag("flower_item")
-            .Concat(api.FlowerCacheInclude).ToList();
+            .Concat(api.FlowerCacheInclude)
+            .Concat(GetItemsByContextTag("category_flowers")).ToHashSet().ToList();
 
         foreach (string v in FlowerCache)
         {

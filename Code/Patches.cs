@@ -2,6 +2,7 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
+using StardewValley.Extensions;
 using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
@@ -206,6 +207,23 @@ public class SDV_TerrainFeature_HoeDirt_plant
         
         __instance.Location.playSound("dirtyHit");
         __result = false;
+
+        Game1.Multiplayer.broadcastSprites(
+            Game1.currentLocation,
+            new TemporaryAnimatedSprite(17, new Vector2(__instance.Tile.X * 64f, __instance.Tile.Y * 64f),
+                Color.White,
+                7,
+                Game1.random.NextBool(),
+                70f));
+        /*
+        Game1.Multiplayer.broadcastSprites(
+            Game1.currentLocation,
+            new TemporaryAnimatedSprite(14, new Vector2(__instance.Tile.X * 64f, __instance.Tile.Y * 64f),
+                Color.White,
+                7,
+                Game1.random.NextBool(), 
+                50f));
+        */
         
         __instance.crop.growCompletely();
         return false;
