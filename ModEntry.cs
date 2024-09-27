@@ -4,7 +4,7 @@ using Leclair.Stardew.BetterCrafting;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Menus;
+using StardewValley.GameData.Objects;
 
 namespace Inflorescence;
 
@@ -22,6 +22,8 @@ public class ModEntry : Mod
     
     public static List<string> GetItemsByContextTag(string contextTag)
     {
+        if (Game1.objectData is null) return new();
+        
         return Game1.objectData.Where(
             v => (v.Value.ContextTags ?? new List<string>()).Contains(contextTag)
         ).Select(
@@ -125,10 +127,31 @@ public class ModEntry : Mod
         api.InflorescenceBonus = 0;
     }
 
+    private static void AddInflorContextTags(IAssetData obj)
+    {
+        IDictionary<string, ObjectData> asDict = obj.AsDictionary<string, ObjectData>().Data;
+        
+        Log("inflor context");
+        
+        if (FlowerCache.Count == 0) DoFlowerCache();
+
+        foreach (var flower in FlowerCache)
+        {
+            Log(flower);
+            if (!asDict.ContainsKey(flower)) continue;
+            asDict[flower].ContextTags.Add("inflor_flower_item");
+        }
+    }
+
     private static void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
     {
         if (e.Name.IsEquivalentTo("Data/Mail")) {
             e.Edit(DataMailAction, AssetEditPriority.Late + 1);
+        }
+
+        if (e.Name.IsEquivalentTo("Data/Objects"))
+        {
+            e.Edit(AddInflorContextTags, AssetEditPriority.Late + 1);
         }
     }
 }

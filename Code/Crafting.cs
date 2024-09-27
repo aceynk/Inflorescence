@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.GameData.Objects;
+using StardewValley.Menus;
 using StardewValley.Objects;
 using static Inflorescence.ModEntry;
 using Object = StardewValley.Object;
@@ -15,6 +16,15 @@ public class Recipes : IRecipeProvider
 
     public IRecipe? GetRecipe(CraftingRecipe recipe)
     {
+        if (recipe.isCookingRecipe) return null;
+        
+        if (recipe.name == ContentPackId + "_Bouquet")
+        {
+            CraftingInit crafting = new();
+
+            return crafting.AddRecipes()[0];
+        }
+        
         return null;
     }
 
@@ -57,7 +67,7 @@ public class CraftingInit
 
         List<Item> usedFlowers = c.ConsumedItems.Where(v => FlowerCache.Contains(v.ItemId)).ToList();
         List<Color> colors =
-            usedFlowers.Select(v => ItemContextTagManager.GetColorFromTags(v) ?? Color.White).ToList();
+            usedFlowers.Select(v => TailoringMenu.GetDyeColor(v) ?? Color.White).ToList();
 
         HashSet<string> flowerNames = new HashSet<string>(usedFlowers.Select(v => v.DisplayName));
         
@@ -145,7 +155,7 @@ public class CraftingInit
         rBuilder.Quantity(1);
         rBuilder.Source(() => Game1.getSourceRectForStandardTileSheet(
             Game1.content.Load<Texture2D>(Game1.objectData[ContentPackId + "_Bouquet"].Texture),
-            6,
+            16,
             16,
             16
         ));

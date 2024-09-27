@@ -3,7 +3,7 @@ namespace Inflorescence.Code;
 public interface IInflorescenceApi
 {
     /// <summary>
-    /// Refreshes the internal cache of flower ids.
+    /// Refreshes the internal cache of flower ids. Warning! Also invalidates cached objectData.
     /// </summary>
     public void InvalidateFlowerCache();
 

@@ -8,5 +8,19 @@
   "MinimumApiVersion": "4.0.0",
   "UpdateKeys": [
     "Github:aceynk/Inflorescence"
+  ],
+  "Dependencies": [
+    {
+      "UniqueId": "aceynk.inflorescencecontent",
+      "IsRequired": true
+    },
+    {
+      "UniqueId": "selph.ExtraMachineConfig",
+      "IsRequired": true
+    },
+    {
+      "UniqueId": "leclair.bettercrafting",
+      "IsRequired": true
+    }
   ]
 }
