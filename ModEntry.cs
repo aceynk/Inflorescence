@@ -87,10 +87,12 @@ public class ModEntry : Mod
             .Concat(api.FlowerCacheInclude)
             .Concat(GetItemsByContextTag("category_flowers")).ToHashSet().ToList();
 
+        /*
         foreach (string v in FlowerCache)
         {
             Log(v);
         }
+        */
     }
 
     private static void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
@@ -131,13 +133,13 @@ public class ModEntry : Mod
     {
         IDictionary<string, ObjectData> asDict = obj.AsDictionary<string, ObjectData>().Data;
         
-        Log("inflor context");
+        //Log("inflor context");
         
         if (FlowerCache.Count == 0) DoFlowerCache();
 
         foreach (var flower in FlowerCache)
         {
-            Log(flower);
+            //Log(flower);
             if (!asDict.ContainsKey(flower)) continue;
             asDict[flower].ContextTags.Add("inflor_flower_item");
         }
