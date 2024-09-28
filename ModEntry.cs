@@ -156,6 +156,7 @@ public class ModEntry : Mod
         {
             //Log(flower);
             if (!asDict.ContainsKey(flower)) continue;
+            asDict[flower].ContextTags ??= new List<string>();
             asDict[flower].ContextTags.Add("inflor_flower_item");
         }
     }
