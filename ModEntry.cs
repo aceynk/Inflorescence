@@ -5,6 +5,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData.Objects;
+using Object = StardewValley.Object;
 
 namespace Inflorescence;
 
@@ -22,13 +23,26 @@ public class ModEntry : Mod
     
     public static List<string> GetItemsByContextTag(string contextTag)
     {
-        if (Game1.objectData is null) return new();
+        if (Game1.objectData is null) return new List<string>();
         
         return Game1.objectData.Where(
             v => (v.Value.ContextTags ?? new List<string>()).Contains(contextTag)
         ).Select(
             v => v.Key
         ).ToList();
+    }
+
+    public static List<string> GetItemsByCategory(int category)
+    {
+        if (Game1.objectData is null) return new List<string>();
+
+        List<string> thisOut = Game1.objectData.Where(
+            v => v.Value.Category == category
+        ).Select(
+            v => v.Key
+        ).ToList();
+
+        return thisOut;
     }
 
     public static IMonitor _log = null!;
@@ -51,8 +65,10 @@ public class ModEntry : Mod
         Helper.Events.Content.AssetRequested += OnAssetRequested;
         Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
         Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
-        
-        helper.ConsoleCommands.Add("inflor_setscore", "Sets the player's Inflorescence score.\n\nUsage: inflor_setscore <value>\n- value: the integer amount.", SetScore);
+
+        helper.ConsoleCommands.Add("inflor_setscore",
+            "Sets the player's Inflorescence score.\n\nUsage: inflor_setscore <value>\n- value: the integer amount.",
+            SetScore);
         
         var harmony = new Harmony(Manifest.UniqueID);
         harmony.PatchAll();
@@ -85,14 +101,13 @@ public class ModEntry : Mod
     {
         FlowerCache = GetItemsByContextTag("flower_item")
             .Concat(api.FlowerCacheInclude)
-            .Concat(GetItemsByContextTag("category_flowers")).ToHashSet().ToList();
-
-        /*
+            .Concat(GetItemsByCategory(Object.flowersCategory)).ToHashSet().ToList();
+        
         foreach (string v in FlowerCache)
         {
             Log(v);
         }
-        */
+        
     }
 
     private static void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
